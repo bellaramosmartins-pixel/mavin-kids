@@ -1,9 +1,10 @@
-MAVIN KIDS - ATUALIZACAO DA VERSAO ONLINE
+MAVIN KIDS V6 — EMOJIS SEM DICAS
 
-24 PERGUNTAS NOVAS / 30 SEGUNDOS PARA TODAS / PONTUACAO NO PAINEL DA APRESENTADORA
+1. Extraia este ZIP.
+2. No seu GitHub, entre no repositório mavin-kids > Add file > Upload files.
+3. Envie os arquivos a partir da pasta extraída, mantendo public/index.html dentro de public.
+4. Confirme Commit changes.
+5. Aguarde a nova implantação no Render e abra o link que você já usa.
 
-No GitHub, abra o repositório atual > Add file > Upload files.
-Envie os novos arquivos server.js, README.md, TESTE_LOCAL.html e a pasta public (com index.html dentro).
-Clique em Commit changes. O Render deve atualizar automaticamente.
-Nao precisa criar novo site nem mudar o link das criancas.
-ATENCAO: atualizar reinicia o servidor e encerra partidas em andamento.
+Os cartões de perguntas mostram apenas ❔. Todos os avatares, pontuação e tempo de 30 segundos foram mantidos.
+A atualização reinicia a sala no servidor; faça-a fora de uma partida.

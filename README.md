@@ -1,3 +1,11 @@
+# VERSÃO 6 — Sem emojis que revelam respostas 🎮
+
+**Mudança:** todos os 24 cartões de perguntas agora usam somente o símbolo neutro ❔. A primeira missão passou a chamar **Portal dos Mistérios**. Nenhum emoji ilustra a resposta durante a pergunta. O estilo do jogo, os avatares, a decoração, as perguntas da Versão 5, as respostas, o tempo de 30 segundos, a pontuação ao vivo da apresentadora, o PLAY único e a permissão de empates foram mantidos.
+
+**Para atualizar o GitHub/Render:** substitua `server.js` e `public/index.html` na mesma estrutura de pastas. `TESTE_LOCAL.html` é apenas para testes offline e também foi atualizado. Depois de salvar o commit, o Render poderá implantar automaticamente a nova versão. Use um momento fora da célula: a publicação reinicia o servidor e encerra salas/placares em andamento.
+
+---
+
 # O Grande Desafio Bíblico — Mavin Kids 💜
 
 **VERSÃO ATUALIZADA — perguntas inéditas, 30 segundos por pergunta e placar da apresentadora. Sem senha.**
