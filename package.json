@@ -1,0 +1,8 @@
+{
+  "name": "mavin-kids-ao-vivo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Jogo bíblico multijogador com sala e apresentador",
+  "scripts": {"start": "node server.js"},
+  "engines": {"node": ">=18"}
+}
