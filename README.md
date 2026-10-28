@@ -1,6 +1,6 @@
 # O Grande Desafio Bíblico — Mavin Kids 💜
 
-**VERSÃO CORRIGIDA — nome → avatar → sala → PLAY → placar. Sem senha.**
+**VERSÃO ATUALIZADA — perguntas inéditas, 30 segundos por pergunta e placar da apresentadora. Sem senha.**
 
 Este pacote tem duas versões, com finalidades diferentes:
 
@@ -48,8 +48,8 @@ A criação de contas, publicação e eventual cobrança da hospedagem dependem 
 - **Entrada: nome → personalização do avatar → sala de espera**.
 - Se o link não for de uma sala válida, a criança recebe aviso antes de personalizar o avatar.
 - Uma única ação de **PLAY** inicia todo o jogo.
-- **60 segundos** para alternativas e **30 segundos** para verdadeiro/falso. O jogo avança automaticamente após o tempo e mostra a resposta correta durante **5 segundos**.
-- **24 perguntas** em quatro missões, placar automático, ✅ ao lado de quem já respondeu, e **empates permitidos na premiação**.
+- **30 segundos** tanto para alternativas quanto para verdadeiro/falso. O jogo avança automaticamente após o tempo e mostra a resposta correta durante **5 segundos**.
+- **24 novas perguntas** em quatro missões, placar com pontos ao lado de cada nome da criança no painel da apresentadora e ✅ para quem respondeu. Os pontos são atribuídos depois da correção automática. **Empates permitidos na premiação**.
 - As crianças não veem as alternativas marcadas pelos colegas. A apresentadora tem opção de verificar detalhes das respostas **no painel dela**, mas não deve compartilhar essa parte da tela.
 
 ## Cuidados importantes
@@ -59,3 +59,17 @@ A criação de contas, publicação e eventual cobrança da hospedagem dependem 
 - As salas e os pontos ficam na memória do servidor: **se ele reiniciar, a sala e o placar serão perdidos**.
 - O servidor deve ficar ativo durante a partida. Plataformas de hospedagem podem ter pausa por inatividade ou limites de uso.
 - O `TESTE_LOCAL.html` não sincroniza aparelhos; para várias casas use o site hospedado.
+
+## Como atualizar seu jogo já publicado no GitHub + Render
+
+**Não é necessário criar outro repositório nem outro Web Service.** O endereço do jogo no Render continua o mesmo.
+
+1. No GitHub, abra o repositório `mavin-kids`. Escolha **Add file → Upload files**.
+2. Envie os arquivos atualizados: `server.js`, `README.md`, `TESTE_LOCAL.html` e a pasta `public` com o `index.html` (e favicon). Arraste os arquivos **a partir da raiz da pasta deste pacote**, preservando a subpasta `public`.
+3. Confira que aparece o caminho `public/index.html` (e não apenas `index.html` na raiz) e confirme em **Commit changes**.
+4. No Render, o **Auto-Deploy** normalmente faz a publicação após o commit. Se estiver desabilitado, use **Manual Deploy → Deploy latest commit**. Espere o status **Live**.
+5. Reabra o site do Render e teste com uma sala nova. Se o navegador mostrar a versão antiga, recarregue com Ctrl+F5.
+
+**Atenção:** ao atualizar, o servidor é reiniciado. Isso apaga as salas e os pontos em andamento; faça a mudança fora do horário da célula.
+
+O placar da apresentadora exibe a **pontuação acumulada** ao lado do nome e o ✅ da rodada. Pontos da resposta atual só entram após o tempo acabar e a correção aparecer, para evitar revelações antecipadas.

@@ -1,0 +1,9 @@
+MAVIN KIDS - ATUALIZACAO DA VERSAO ONLINE
+
+24 PERGUNTAS NOVAS / 30 SEGUNDOS PARA TODAS / PONTUACAO NO PAINEL DA APRESENTADORA
+
+No GitHub, abra o repositório atual > Add file > Upload files.
+Envie os novos arquivos server.js, README.md, TESTE_LOCAL.html e a pasta public (com index.html dentro).
+Clique em Commit changes. O Render deve atualizar automaticamente.
+Nao precisa criar novo site nem mudar o link das criancas.
+ATENCAO: atualizar reinicia o servidor e encerra partidas em andamento.
