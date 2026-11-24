@@ -26,6 +26,9 @@ function randomAvatar(){const a={};for(const [k,n] of Object.entries(AVATAR_PART
 const MCQ_SECONDS = Number(process.env.MCQ_SECONDS)||30;
 const TF_SECONDS = Number(process.env.TF_SECONDS)||30;
 const REVEAL_SECONDS = Number(process.env.REVEAL_SECONDS)||5;
+// Pequena janela de tolerância para respostas enviadas no final dos 30 s.
+// O cliente bloqueia respostas ao zerar, mas a rede pode demorar a entregá-las.
+const ANSWER_GRACE_MS = 1800;
 const questionSeconds = q=>q.kind==='tf'?TF_SECONDS:MCQ_SECONDS;
 const QUESTIONS = [
   {"mission":0,"kind":"emoji","emoji":"❔","text":"O que Eliseu fez flutuar na água?","choices":["Uma pedra","O ferro de um machado","Um vaso"],"correct":1,"ref":"2 Reis 6:5–7","detail":"Eliseu lançou um pedaço de madeira na água, e o ferro do machado flutuou."},
@@ -100,7 +103,7 @@ function startQuestion(room){
  if(!getQuestion(room))throw Error('Não há mais perguntas.');
  room.phase='active';room.startedAt=Date.now();
  room.deadline=room.startedAt+questionSeconds(getQuestion(room))*1000;
- room.timer=setTimeout(()=>reveal(room),room.deadline-Date.now());broadcast(room);
+ room.timer=setTimeout(()=>reveal(room),Math.max(0,room.deadline+ANSWER_GRACE_MS-Date.now()));broadcast(room);
 }
 function hostAction(room,action){
  if(action==='play'){if(room.phase!=='lobby')throw Error('A partida já começou.');if(room.players.size===0)throw Error('Espere pelo menos uma criança entrar na sala.');startQuestion(room);return;}
@@ -115,6 +118,8 @@ function authorise(room,role,id){if(role==='host'&&id===room.hostToken)return; i
 const server=http.createServer(async(req,res)=>{
  let url;try{url=new URL(req.url,'http://localhost');}catch{return send(res,400,{error:'URL inválida'});}
  if(req.method==='GET'&&url.pathname==='/health')return send(res,200,{ok:true,rooms:rooms.size});
+ if(req.method==='GET'&&url.pathname==='/api/time')return send(res,200,{now:Date.now()});
+ if(req.method==='GET'&&url.pathname==='/api/state'){try{const room=getRoom(url.searchParams.get('room'));const role=url.searchParams.get('role');const t=url.searchParams.get('token');authorise(room,role,t);return send(res,200,serialize(room,role,t));}catch(e){return handleError(res,e);}}
  if(req.method==='GET'&&url.pathname==='/api/room'){try{const room=getRoom(url.searchParams.get('room'));return send(res,200,{ok:true,phase:room.phase,participants:room.players.size});}catch(e){return send(res,404,{error:e.message||'Sala não encontrada.'});}}
  if(req.method==='GET'&&url.pathname==='/api/events'){
   try{const room=getRoom(url.searchParams.get('room'));const role=url.searchParams.get('role');const t=url.searchParams.get('token');authorise(room,role,t);res.writeHead(200,{'Content-Type':'text/event-stream; charset=utf-8','Cache-Control':'no-cache, no-transform','Connection':'keep-alive','X-Accel-Buffering':'no'});res.write('retry: 2500\n\n');const client={role,token:t,res};room.listeners.add(client);res.write('data: '+JSON.stringify(serialize(room,role,t))+'\n\n');const ping=setInterval(()=>{if(!res.destroyed)res.write(': ping\n\n');},20000);req.on('close',()=>{clearInterval(ping);room.listeners.delete(client);});}
@@ -142,7 +147,7 @@ const server=http.createServer(async(req,res)=>{
    }
    if(url.pathname==='/api/answer'){
     const room=getRoom(b.room);authorise(room,'player',b.token);
-    if(room.phase!=='active'||Date.now()>=room.deadline){if(room.phase==='active')reveal(room);throw Error('O tempo para responder terminou.');}
+    if(room.phase!=='active'||Date.now()>=room.deadline+ANSWER_GRACE_MS){if(room.phase==='active')reveal(room);throw Error('O tempo para responder terminou.');}
     // Refuse late requests intended for an earlier question, even if the next is already active.
     if(b.questionIndex!==room.index)throw Error('Essa pergunta já terminou. Aguarde a próxima.');
     const p=room.players.get(b.token);const q=getQuestion(room);
