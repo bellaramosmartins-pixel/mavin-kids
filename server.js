@@ -57,7 +57,7 @@ const MISSIONS = [
   {name:'Portal dos Mistérios',icon:'🧩',subtitle:'Responda aos desafios bíblicos',time:30,points:10},
   {name:'Caça às Pistas',icon:'🔎',subtitle:'Descubra o objeto da história',time:30,points:10},
   {name:'Baús Misteriosos',icon:'🎁',subtitle:'Verdadeiro ou falso?',time:30,points:10},
-  {name:'O Grande Enigma',icon:'🗝️',subtitle:'Quem é esse personagem?',time:30,points:15}
+  {name:'O Grande Enigma',icon:'🗝️',subtitle:'Quem é esse personagem?',time:30,points:10}
 ];
 function token(){return crypto.randomBytes(24).toString('hex');}
 function roomCode(){let x; do {x=String(crypto.randomInt(100000,999999));} while(rooms.has(x)); return x;}
@@ -75,7 +75,7 @@ function serialize(room,role,playerToken){
  let rank=0,last=null;
  scores.forEach((p,i)=>{if(p.score!==last){rank=i+1;last=p.score;}p.rank=rank;});
  const high=scores.length ? scores[0].score : null;
- return {code:room.code,phase:room.phase,questionIndex:room.index,total:QUESTIONS.length,missions:MISSIONS,now,deadline:room.deadline,question:visibleQuestion?{mission:q.mission,kind:q.kind,emoji:q.emoji,text:q.text,choices:q.choices,points:MISSIONS[q.mission].points,reference:showCorrect||isHost?q.ref:null,detail:showCorrect||isHost?q.detail:null,...((showCorrect||isHost)?{correct:q.correct}:{})}:null,participants:scores.length,answeredCount:[...room.players.values()].filter(p=>p.answers[room.index]).length,ranking: isHost? scores : (showCorrect||room.phase==='lobby'||room.phase==='ready'||room.phase==='finished' ? scores.map(({selected,...p})=>p) : scores.map(p=>({id:p.id,name:p.name,avatar:p.avatar,answered:p.answered}))),champions:room.phase==='finished'?scores.filter(p=>p.score===high):[],me:player?{id:player.id,name:player.name,avatar:player.avatar,score:player.score,answered:player.answers[room.index]?.choice??null,wasCorrect:showCorrect && player.answers[room.index]?.choice===q.correct}:null,host:isHost,seconds: q?questionSeconds(q):30,revealSeconds:REVEAL_SECONDS};
+ return {code:room.code,phase:room.phase,questionIndex:room.index,total:QUESTIONS.length,missions:MISSIONS,now,deadline:room.deadline,question:visibleQuestion?{mission:q.mission,kind:q.kind,emoji:q.emoji,text:q.text,choices:q.choices,points:MISSIONS[q.mission].points,reference:showCorrect||isHost?q.ref:null,detail:showCorrect||isHost?q.detail:null,...((showCorrect||isHost)?{correct:q.correct}:{})}:null,participants:scores.length,answeredCount:[...room.players.values()].filter(p=>p.answers[room.index]).length,ranking: isHost? scores : (showCorrect||room.phase==='lobby'||room.phase==='ready'||room.phase==='finished' ? scores.map(({selected,...p})=>p) : scores.map(p=>({id:p.id,name:p.name,avatar:p.avatar,answered:p.answered}))),champions:room.phase==='finished'?scores.filter(p=>p.score===high):[],me:player?{id:player.id,name:player.name,avatar:player.avatar,score:player.score,answered:player.answers[room.index]?.choice??null,revision:player.answers[room.index]?.revision??0,wasCorrect:showCorrect && player.answers[room.index]?.choice===q.correct}:null,host:isHost,seconds: q?questionSeconds(q):30,revealSeconds:REVEAL_SECONDS};
 }
 function broadcast(room){room.updatedAt=Date.now();for(const client of [...room.listeners]){try{client.res.write('data: '+JSON.stringify(serialize(room,client.role,client.token))+'\n\n');}catch(e){room.listeners.delete(client);}}}
 function reveal(room){
@@ -143,10 +143,17 @@ const server=http.createServer(async(req,res)=>{
    if(url.pathname==='/api/answer'){
     const room=getRoom(b.room);authorise(room,'player',b.token);
     if(room.phase!=='active'||Date.now()>=room.deadline){if(room.phase==='active')reveal(room);throw Error('O tempo para responder terminou.');}
+    // Refuse late requests intended for an earlier question, even if the next is already active.
+    if(b.questionIndex!==room.index)throw Error('Essa pergunta já terminou. Aguarde a próxima.');
     const p=room.players.get(b.token);const q=getQuestion(room);
-    if(p.answers[room.index])throw Error('Você já respondeu. Sua resposta está salva!');
     const choice=b.choice;if(!Number.isInteger(choice)||choice<0||choice>=q.choices.length)throw Error('Escolha uma resposta.');
-    p.answers[room.index]={choice,at:Date.now()};broadcast(room);return send(res,200,{ok:true});
+    // A child may change the answer any number of times while time remains.
+    // revision ensures that delayed/out-of-order network requests cannot overwrite a later tap.
+    const revision=Number.isSafeInteger(b.revision)&&b.revision>0?b.revision:Date.now();
+    const previous=p.answers[room.index];
+    if(previous&&revision<=previous.revision)return send(res,200,{ok:true,ignored:true});
+    p.answers[room.index]={choice,at:Date.now(),revision};
+    broadcast(room);return send(res,200,{ok:true});
    }
    return send(res,404,{error:'Ação não encontrada.'});
   }catch(e){return handleError(res,e);}

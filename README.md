@@ -1,3 +1,15 @@
+MAVIN KIDS — VERSÃO 7 (troca de resposta e Quem Sou Eu com 10 pontos)
+
+1. A criança pode tocar em outra alternativa quantas vezes quiser dentro dos 30 segundos. A última escolha registrada é a que vale.
+2. O painel da apresentadora mantém um único ✅ por criança na pergunta; a contagem não aumenta ao trocar.
+3. Após zerar o cronômetro, nenhuma troca é permitida.
+4. As seis perguntas da última missão "O Grande Enigma / Quem Sou Eu?" valem 10 pontos cada, conforme solicitado (antes o arquivo da versão 6 indicava 15 pontos).
+5. Todo o resto, incluindo perguntas, avatares, empates, cronômetro e placar, foi mantido.
+
+Para atualizar o mesmo site, substitua os arquivos server.js e public/index.html no repositório GitHub (preserve a pasta public). Faça isso fora da partida, pois o deploy no Render reinicia o servidor e apaga as salas/placares da memória. Se o deploy automático estiver ligado, o Render usará o mesmo link.
+
+TESTE_LOCAL.html: abra no navegador para simular apresentadora/criança, sem celular adicional nem hospedagem.
+
 # VERSÃO 6 — Sem emojis que revelam respostas 🎮
 
 **Mudança:** todos os 24 cartões de perguntas agora usam somente o símbolo neutro ❔. A primeira missão passou a chamar **Portal dos Mistérios**. Nenhum emoji ilustra a resposta durante a pergunta. O estilo do jogo, os avatares, a decoração, as perguntas da Versão 5, as respostas, o tempo de 30 segundos, a pontuação ao vivo da apresentadora, o PLAY único e a permissão de empates foram mantidos.

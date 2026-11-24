@@ -1,10 +1,11 @@
-MAVIN KIDS V6 — EMOJIS SEM DICAS
+MAVIN KIDS — VERSÃO 7 (troca de resposta e Quem Sou Eu com 10 pontos)
 
-1. Extraia este ZIP.
-2. No seu GitHub, entre no repositório mavin-kids > Add file > Upload files.
-3. Envie os arquivos a partir da pasta extraída, mantendo public/index.html dentro de public.
-4. Confirme Commit changes.
-5. Aguarde a nova implantação no Render e abra o link que você já usa.
+1. A criança pode tocar em outra alternativa quantas vezes quiser dentro dos 30 segundos. A última escolha registrada é a que vale.
+2. O painel da apresentadora mantém um único ✅ por criança na pergunta; a contagem não aumenta ao trocar.
+3. Após zerar o cronômetro, nenhuma troca é permitida.
+4. As seis perguntas da última missão "O Grande Enigma / Quem Sou Eu?" valem 10 pontos cada, conforme solicitado (antes o arquivo da versão 6 indicava 15 pontos).
+5. Todo o resto, incluindo perguntas, avatares, empates, cronômetro e placar, foi mantido.
 
-Os cartões de perguntas mostram apenas ❔. Todos os avatares, pontuação e tempo de 30 segundos foram mantidos.
-A atualização reinicia a sala no servidor; faça-a fora de uma partida.
+Para atualizar o mesmo site, substitua os arquivos server.js e public/index.html no repositório GitHub (preserve a pasta public). Faça isso fora da partida, pois o deploy no Render reinicia o servidor e apaga as salas/placares da memória. Se o deploy automático estiver ligado, o Render usará o mesmo link.
+
+TESTE_LOCAL.html: abra no navegador para simular apresentadora/criança, sem celular adicional nem hospedagem.
